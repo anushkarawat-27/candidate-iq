@@ -1,20 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
-import { queryOne } from "@/lib/db";
+import { updateNotes, parseId } from "@/lib/candidates";
+import { notFound, badRequest } from "@/lib/api";
 
 export async function PATCH(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const { notes } = await req.json();
-  const candidate = await queryOne(
-    `UPDATE "Candidate" SET "notes" = $1, "updatedAt" = NOW()
-     WHERE "id" = $2 RETURNING *`,
-    [notes, parseInt(params.id)]
-  );
+  const id = parseId(params.id);
+  if (!id) return badRequest("Invalid candidate ID");
 
-  if (!candidate) {
-    return NextResponse.json({ error: "Candidate not found" }, { status: 404 });
-  }
+  const body = await req.json();
+  if (typeof body.notes !== "string") return badRequest("Notes must be a string");
+
+  const candidate = await updateNotes(id, body.notes);
+  if (!candidate) return notFound("Candidate");
 
   return NextResponse.json(candidate);
 }

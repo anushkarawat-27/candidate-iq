@@ -1,18 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
-import { queryOne } from "@/lib/db";
+import { findCandidateById, parseId } from "@/lib/candidates";
+import { notFound, badRequest } from "@/lib/api";
 
 export async function GET(
   _req: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const candidate = await queryOne(
-    'SELECT * FROM "Candidate" WHERE "id" = $1',
-    [parseInt(params.id)]
-  );
+  const id = parseId(params.id);
+  if (!id) return badRequest("Invalid candidate ID");
 
-  if (!candidate) {
-    return NextResponse.json({ error: "Candidate not found" }, { status: 404 });
-  }
+  const candidate = await findCandidateById(id);
+  if (!candidate) return notFound("Candidate");
 
   return NextResponse.json(candidate);
 }

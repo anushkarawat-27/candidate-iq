@@ -178,7 +178,10 @@ export default function Home() {
     }
   };
 
-  const displayCandidates = similarCandidates || candidates;
+  const rawCandidates = similarCandidates || candidates;
+  const displayCandidates = roleDescription
+    ? rawCandidates
+    : rawCandidates.map((c) => ({ ...c, fitScore: null, fitReason: null }));
   const selectedCandidate = displayCandidates.find((c) => c.id === selectedId);
   const compareCandidates = displayCandidates.filter((c) => compareIds.has(c.id));
 

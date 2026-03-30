@@ -1,0 +1,35 @@
+export const PAGINATION = {
+  DEFAULT_PAGE: 1,
+  DEFAULT_LIMIT: 20,
+  MAX_LIMIT: 100,
+} as const;
+
+export const ALLOWED_SORTS = [
+  "followers",
+  "totalStars",
+  "publicRepos",
+  "name",
+  "login",
+  "fitScore",
+] as const;
+
+export type SortField = (typeof ALLOWED_SORTS)[number];
+
+export const CLAUDE_MODEL = "claude-sonnet-4-20250514" as const;
+
+export const CSV_HEADERS = [
+  "Name",
+  "Username",
+  "GitHub URL",
+  "Email",
+  "Location",
+  "Company",
+  "Bio",
+  "Languages",
+  "Followers",
+  "Total Stars",
+  "Public Repos",
+  "Blog",
+  "Twitter",
+  "AI Summary",
+] as const;
