@@ -116,7 +116,7 @@ export default function FilterBar({
           <select
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
-            className="px-4 py-2.5 bg-gray-50/80 border border-gray-200/80 rounded-xl text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-400 focus:bg-white transition-all min-w-[160px] appearance-none cursor-pointer"
+            className="px-4 py-2.5 bg-gray-50/80 border border-gray-200/80 rounded-lg text-sm text-gray-600 hover:bg-white hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-400 focus:bg-white transition-all min-w-[160px] appearance-none cursor-pointer"
           >
             <option value="">All Languages</option>
             {languages.map((lang) => (
@@ -148,7 +148,7 @@ export default function FilterBar({
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="px-4 py-2.5 bg-gray-50/80 border border-gray-200/80 rounded-xl text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-400 focus:bg-white transition-all appearance-none cursor-pointer"
+            className="px-4 py-2.5 bg-gray-50/80 border border-gray-200/80 rounded-lg text-sm text-gray-600 hover:bg-white hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-400 focus:bg-white transition-all appearance-none cursor-pointer"
           >
             <option value="followers">Sort: Followers</option>
             <option value="totalStars">Sort: Stars</option>

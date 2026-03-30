@@ -22,7 +22,7 @@ export function CardSkeleton() {
 
 export function DetailSkeleton() {
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-6 animate-fade-in">
+    <div className="bg-white rounded-xl border border-gray-100 p-6 animate-fade-in">
       <div className="flex items-start gap-4">
         <div className="w-16 h-16 rounded-xl animate-shimmer" />
         <div className="flex-1">

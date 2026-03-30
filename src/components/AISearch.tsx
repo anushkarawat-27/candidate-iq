@@ -47,7 +47,7 @@ export default function AISearch({ onSelectCandidate, selectedId }: AISearchProp
   return (
     <div className="max-w-3xl mx-auto">
       {/* Search input */}
-      <div className="bg-white rounded-2xl border border-gray-200/60 p-8 shadow-sm">
+      <div className="bg-white rounded-xl border border-gray-200/60 p-8 shadow-sm">
         <div className="flex items-center gap-2.5 mb-1.5">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center shadow-sm">
             <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">

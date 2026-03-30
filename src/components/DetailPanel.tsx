@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Candidate } from "@/lib/types";
+import { showToast } from "./Toast";
 
 interface DetailPanelProps {
   candidate: Candidate;
@@ -47,6 +48,7 @@ export default function DetailPanel({
     const timeout = setTimeout(() => {
       onNotesUpdate(candidate.id, value);
       setNotesSaved(true);
+      showToast("Notes saved");
     }, 800);
     setNotesTimeout(timeout);
   };
@@ -80,7 +82,7 @@ export default function DetailPanel({
   ];
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-200/60 overflow-hidden h-full flex flex-col shadow-sm animate-slide-in">
+    <div className="bg-white rounded-xl border border-gray-200/60 overflow-hidden h-full flex flex-col shadow-sm animate-slide-in">
       {/* Header */}
       <div className="p-6 border-b border-gray-100">
         <div className="flex items-start gap-4">
@@ -310,17 +312,12 @@ export default function DetailPanel({
 
             {/* Recruiter Notes */}
             <div>
-              <div className="flex items-center justify-between mb-2">
-                <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                  </svg>
-                  Notes
-                </h4>
-                <span className={`text-[10px] transition-all ${notesSaved ? "text-green-400" : "text-amber-400"}`}>
-                  {notesSaved ? "Saved" : "Saving..."}
-                </span>
-              </div>
+              <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider flex items-center gap-1.5 mb-2">
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                Notes
+              </h4>
               <textarea
                 value={notes}
                 onChange={(e) => handleNotesChange(e.target.value)}

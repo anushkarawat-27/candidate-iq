@@ -8,6 +8,7 @@ import DetailPanel from "@/components/DetailPanel";
 import AISearch from "@/components/AISearch";
 import CompareModal from "@/components/CompareModal";
 import RoleBar from "@/components/RoleBar";
+import ToastContainer, { showToast } from "@/components/Toast";
 import { CardSkeleton } from "@/components/LoadingSkeleton";
 import { Candidate, CandidatesResponse } from "@/lib/types";
 
@@ -100,6 +101,7 @@ export default function Home() {
           prev ? prev.map((c) => (c.id === id ? { ...updated, similarityReason: c.similarityReason } : c)) : null
         );
       }
+      showToast(updated.shortlisted ? "Added to shortlist" : "Removed from shortlist");
     } catch (err) {
       console.error("Failed to toggle shortlist:", err);
     }
@@ -270,12 +272,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Compare hint */}
-            {compareIds.size === 0 && !similarCandidates && !loading && candidates.length > 0 && (
-              <p className="text-xs text-gray-400 mb-3">
-                Tip: Click the checkbox on cards to select candidates for AI comparison.
-              </p>
-            )}
 
             {/* Similar loading */}
             {similarLoading && (
@@ -291,10 +287,23 @@ export default function Home() {
             {/* Main Content: List + Detail */}
             {!similarLoading && (
               <>
-              <div className="bg-white rounded-2xl border border-gray-200/60 overflow-hidden shadow-sm">
+              <div className="bg-white rounded-xl border border-gray-200/60 overflow-hidden shadow-sm">
+                {/* Column Header */}
+                <div className="flex items-center gap-4 px-5 py-2.5 border-b border-gray-100 bg-gray-50/50 text-[11px] font-medium text-gray-400 uppercase tracking-wider">
+                  <div className="w-4 flex-shrink-0" /> {/* checkbox space */}
+                  <div className="w-9 flex-shrink-0" /> {/* avatar space */}
+                  <div className="w-[220px] flex-shrink-0">Name</div>
+                  <div className="hidden md:block w-[200px] flex-shrink-0">Languages</div>
+                  <div className="flex items-center gap-5 ml-auto flex-shrink-0">
+                    <span className="w-[52px] text-right">Followers</span>
+                    <span className="w-[48px] text-right">Stars</span>
+                  </div>
+                  {roleDescription && <div className="w-[42px] text-center flex-shrink-0">Fit</div>}
+                  <div className="w-4 flex-shrink-0" /> {/* arrow space */}
+                </div>
                 <div
-                  className="overflow-y-auto"
-                  style={{ maxHeight: "calc(100vh - 280px)" }}
+                  className="overflow-y-auto scroll-shadow"
+                  style={{ maxHeight: "calc(100vh - 320px)" }}
                 >
                   {loading ? (
                     Array.from({ length: 8 }).map((_, i) => <CardSkeleton key={i} />)
@@ -313,7 +322,7 @@ export default function Home() {
                     </div>
                   ) : (
                     displayCandidates.map((candidate, i) => (
-                      <div key={candidate.id} className="flex items-center animate-card-in" style={{ animationDelay: `${i * 20}ms` }}>
+                      <div key={candidate.id} className="flex items-center animate-card-in group/row hover:bg-gray-50 transition-colors" style={{ animationDelay: `${i * 20}ms` }}>
                         <input
                           type="checkbox"
                           checked={compareIds.has(candidate.id)}
@@ -392,14 +401,17 @@ export default function Home() {
                     className="fixed top-0 right-0 h-full w-full max-w-xl z-50 animate-slide-in shadow-2xl"
                   >
                     <div className="h-full flex flex-col">
-                      <button
-                        onClick={() => setSelectedId(null)}
-                        className="absolute top-4 right-4 z-10 p-2 bg-white/90 hover:bg-gray-100 rounded-xl transition-all shadow-sm"
-                      >
-                        <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                      </button>
+                      <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100 bg-white flex-shrink-0">
+                        <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">Candidate Detail</span>
+                        <button
+                          onClick={() => setSelectedId(null)}
+                          className="p-1.5 hover:bg-gray-100 rounded-lg transition-all"
+                        >
+                          <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </div>
                       <DetailPanel
                         candidate={selectedCandidate}
                         onShortlistToggle={handleShortlistToggle}
@@ -423,6 +435,8 @@ export default function Home() {
           onClose={() => setShowCompare(false)}
         />
       )}
+
+      <ToastContainer />
     </div>
   );
 }

@@ -100,3 +100,15 @@ input:focus, select:focus {
 .badge-glow:hover {
   box-shadow: 0 0 8px rgba(79, 70, 229, 0.2);
 }
+
+/* Scroll shadow — subtle top shadow when scrolled */
+.scroll-shadow {
+  background:
+    linear-gradient(white 30%, rgba(255,255,255,0)) center top,
+    linear-gradient(rgba(255,255,255,0), white 70%) center bottom,
+    radial-gradient(farthest-side at 50% 0, rgba(0,0,0,0.06), transparent) center top,
+    radial-gradient(farthest-side at 50% 100%, rgba(0,0,0,0.06), transparent) center bottom;
+  background-repeat: no-repeat;
+  background-size: 100% 20px, 100% 20px, 100% 8px, 100% 8px;
+  background-attachment: local, local, scroll, scroll;
+}
