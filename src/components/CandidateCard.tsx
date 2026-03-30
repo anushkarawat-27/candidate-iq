@@ -1,16 +1,12 @@
 "use client";
 
 import { Candidate } from "@/lib/types";
+import { formatNumber } from "@/lib/utils";
 
 interface CandidateCardProps {
   candidate: Candidate;
   isActive: boolean;
   onClick: () => void;
-}
-
-function formatNumber(n: number): string {
-  if (n >= 1000) return (n / 1000).toFixed(1).replace(/\.0$/, "") + "k";
-  return n.toString();
 }
 
 export default function CandidateCard({

@@ -2,15 +2,11 @@
 
 import { useState } from "react";
 import { Candidate } from "@/lib/types";
+import { formatNumber } from "@/lib/utils";
 
 interface CompareModalProps {
   candidates: Candidate[];
   onClose: () => void;
-}
-
-function formatNumber(n: number): string {
-  if (n >= 1000) return (n / 1000).toFixed(1).replace(/\.0$/, "") + "k";
-  return n.toString();
 }
 
 export default function CompareModal({ candidates, onClose }: CompareModalProps) {
