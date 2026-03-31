@@ -39,7 +39,7 @@ export default function FilterBar({
   }, [applyFilters]);
 
   return (
-    <div className="glass border-b border-gray-200/60">
+    <div className="glass border-b border-gray-200/60 sticky top-16 z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         {/* Tab Toggle */}
         <div className="flex items-center gap-2 mb-4">

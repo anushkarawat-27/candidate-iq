@@ -25,6 +25,7 @@ export function parseJsonResponse<T>(text: string): T | null {
   try {
     return JSON.parse(text) as T;
   } catch {
+    console.error("Failed to parse Claude JSON response:", text.slice(0, 200));
     return null;
   }
 }

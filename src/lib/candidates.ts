@@ -87,8 +87,8 @@ export async function findCandidates(
   const safeOrder = order === "asc" ? "ASC" : "DESC";
   const offset = (page - 1) * limit;
 
-  const countResult = await query<{ count: string }>(
-    `SELECT COUNT(*) FROM "Candidate" ${whereClause}`,
+  const countResult = await query<{ count: number }>(
+    `SELECT COUNT(*)::int as count FROM "Candidate" ${whereClause}`,
     values
   );
 
@@ -101,7 +101,7 @@ export async function findCandidates(
 
   return {
     candidates,
-    total: parseInt(countResult[0].count),
+    total: countResult[0].count,
   };
 }
 

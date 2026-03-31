@@ -37,6 +37,7 @@ export default function Home() {
   // Role context state
   const [roleDescription, setRoleDescription] = useState("");
   const [scoring, setScoring] = useState(false);
+  const [scored, setScored] = useState(false);
 
   // --- Handlers ---
 
@@ -93,17 +94,18 @@ export default function Home() {
       const allData: CandidatesResponse = await allRes.json();
       const allIds = allData.candidates.map((c) => c.id);
 
-      let scored = 0;
+      let scoredCount = 0;
       for (let i = 0; i < allIds.length; i += 10) {
         const res = await fetch("/api/ai/fit", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ roleDescription, candidateIds: allIds.slice(i, i + 10) }),
         });
-        if (res.ok) scored += Math.min(10, allIds.length - i);
+        if (res.ok) scoredCount += Math.min(10, allIds.length - i);
       }
 
-      showToast(`Scored ${scored} candidates`);
+      setScored(true);
+      showToast(`Scored ${scoredCount} candidates`);
       setFilters((prev) => ({ ...prev, sortBy: "fitScore" }));
       setPage(1);
     } catch (err) {
@@ -131,7 +133,7 @@ export default function Home() {
   // --- Derived state ---
 
   const rawCandidates = similarCandidates || candidates;
-  const displayCandidates = roleDescription
+  const displayCandidates = (roleDescription && scored)
     ? rawCandidates
     : rawCandidates.map((c) => ({ ...c, fitScore: null, fitReason: null }));
   const selectedCandidate = displayCandidates.find((c) => c.id === selectedId);
@@ -179,7 +181,7 @@ export default function Home() {
         <>
           <RoleBar
             roleDescription={roleDescription}
-            onRoleChange={setRoleDescription}
+            onRoleChange={(role) => { setRoleDescription(role); setScored(false); }}
             onScoreCandidates={handleScoreCandidates}
             scoring={scoring}
           />

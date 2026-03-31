@@ -2,18 +2,18 @@ import { NextRequest, NextResponse } from "next/server";
 import { askClaude } from "@/lib/claude";
 import { findCandidateById, updateAiSummary, formatProfileForAI } from "@/lib/candidates";
 import { PROMPTS } from "@/lib/prompts";
-import { notFound, errorResponse } from "@/lib/api";
+import { AI_TOKEN_LIMITS } from "@/lib/constants";
+import { notFound, errorResponse, parseBody, candidateIdSchema } from "@/lib/api";
 
 export async function POST(req: NextRequest) {
   try {
-    const { candidateId } = await req.json();
-    const candidate = await findCandidateById(candidateId);
+    const parsed = await parseBody(req, candidateIdSchema);
+    if ("error" in parsed) return parsed.error;
 
+    const candidate = await findCandidateById(parsed.data.candidateId);
     if (!candidate) return notFound("Candidate");
 
-    const profileData = formatProfileForAI(candidate, { includeRepos: true, repoLimit: 5 });
-    const summary = await askClaude(PROMPTS.SUMMARY, profileData, 300);
-
+    const summary = await askClaude(PROMPTS.SUMMARY, formatProfileForAI(candidate), AI_TOKEN_LIMITS.SUMMARY);
     await updateAiSummary(candidate.id, summary);
 
     return NextResponse.json({ summary });

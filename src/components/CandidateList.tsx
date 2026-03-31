@@ -34,7 +34,7 @@ export default function CandidateList({
   onPageChange,
 }: CandidateListProps) {
   return (
-    <div className="bg-white rounded-xl border border-gray-200/60 overflow-hidden shadow-sm">
+    <div className="bg-white rounded-xl border border-gray-200/60 shadow-sm">
       {/* Column Header */}
       <div className="hidden sm:flex items-center gap-4 px-5 py-2.5 border-b border-gray-100 bg-gray-50/50 text-[11px] font-medium text-gray-400 uppercase tracking-wider">
         <div className="w-4 flex-shrink-0" />
@@ -50,8 +50,8 @@ export default function CandidateList({
         <div className="w-4 flex-shrink-0" />
       </div>
 
-      {/* Scrollable List */}
-      <div className="overflow-y-auto scroll-shadow" style={{ maxHeight: "calc(100vh - 320px)" }}>
+      {/* List */}
+      <div>
         {loading ? (
           Array.from({ length: 8 }).map((_, i) => <CardSkeleton key={i} />)
         ) : candidates.length === 0 ? (

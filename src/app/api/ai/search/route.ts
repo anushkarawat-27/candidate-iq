@@ -4,7 +4,8 @@ import { buildWhereClause, safeSortColumn } from "@/lib/candidates";
 import { query } from "@/lib/db";
 import { Candidate } from "@/lib/types";
 import { PROMPTS } from "@/lib/prompts";
-import { badRequest, errorResponse } from "@/lib/api";
+import { AI_TOKEN_LIMITS } from "@/lib/constants";
+import { badRequest, errorResponse, parseBody, searchSchema } from "@/lib/api";
 
 interface ParsedFilters {
   search: string;
@@ -18,18 +19,12 @@ interface ParsedFilters {
 
 export async function POST(req: NextRequest) {
   try {
-    const { query: userQuery } = await req.json();
+    const parsed = await parseBody(req, searchSchema);
+    if ("error" in parsed) return parsed.error;
 
-    if (!userQuery || typeof userQuery !== "string") {
-      return badRequest("Query is required");
-    }
-
-    const result = await askClaude(PROMPTS.SEARCH, userQuery, 256);
+    const result = await askClaude(PROMPTS.SEARCH, parsed.data.query, AI_TOKEN_LIMITS.SEARCH);
     const filters = parseJsonResponse<ParsedFilters>(result);
-
-    if (!filters) {
-      return errorResponse("Failed to parse AI response");
-    }
+    if (!filters) return errorResponse("Failed to parse AI response");
 
     const { whereClause, values } = buildWhereClause({
       search: filters.search || undefined,
@@ -39,10 +34,8 @@ export async function POST(req: NextRequest) {
       minStars: filters.minStars,
     });
 
-    const sortColumn = safeSortColumn(filters.sortBy);
-
     const candidates = await query<Candidate>(
-      `SELECT * FROM "Candidate" ${whereClause} ORDER BY ${sortColumn} DESC NULLS LAST LIMIT 20`,
+      `SELECT * FROM "Candidate" ${whereClause} ORDER BY ${safeSortColumn(filters.sortBy)} DESC NULLS LAST LIMIT 20`,
       values
     );
 
