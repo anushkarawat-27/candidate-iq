@@ -2,7 +2,7 @@
 
 A candidate intelligence platform that helps recruiters browse, evaluate, and compare developer candidates using data from GitHub and AI-powered analysis.
 
-**Live Demo:** [your-vercel-url]
+**Live Demo:** https://candidate-iq-theta.vercel.app
 
 ## What I Built
 
