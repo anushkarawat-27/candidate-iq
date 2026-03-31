@@ -9,10 +9,11 @@ import AnimatedCounter from "./ui/AnimatedCounter";
 interface SummaryTabProps {
   candidate: Candidate;
   notes: string;
+  notesSaved: boolean;
   onNotesChange: (value: string) => void;
 }
 
-export default function SummaryTab({ candidate, notes, onNotesChange }: SummaryTabProps) {
+export default function SummaryTab({ candidate, notes, notesSaved, onNotesChange }: SummaryTabProps) {
   const [aiSummary, setAiSummary] = useState<string | null>(candidate.aiSummary);
   const [summaryLoading, setSummaryLoading] = useState(false);
 
@@ -130,7 +131,15 @@ export default function SummaryTab({ candidate, notes, onNotesChange }: SummaryT
 
       {/* Notes */}
       <div>
-        <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Notes</h4>
+        <div className="flex items-center justify-between mb-2">
+          <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Notes</h4>
+          {notes && (
+            <span className={`flex items-center gap-1 text-[10px] font-medium transition-all ${notesSaved ? "text-green-500" : "text-amber-500"}`}>
+              <span className={`w-1.5 h-1.5 rounded-full ${notesSaved ? "bg-green-500" : "bg-amber-500"}`} />
+              {notesSaved ? "Saved" : "Saving..."}
+            </span>
+          )}
+        </div>
         <textarea
           value={notes}
           onChange={(e) => onNotesChange(e.target.value)}

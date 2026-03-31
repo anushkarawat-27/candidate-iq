@@ -52,24 +52,6 @@ export default function CandidateCard({
         </p>
       </div>
 
-      {/* Reachability indicator */}
-      <span
-        className={`hidden sm:block w-2 h-2 rounded-full flex-shrink-0 ${
-          candidate.email
-            ? "bg-green-400"
-            : candidate.blog || candidate.twitterUsername
-              ? "bg-amber-400"
-              : "bg-gray-200"
-        }`}
-        title={
-          candidate.email
-            ? `Reachable: ${candidate.email}`
-            : candidate.blog || candidate.twitterUsername
-              ? "Reachable via blog/social"
-              : "No contact info"
-        }
-      />
-
       {/* Languages — fixed width */}
       <div className="hidden md:flex items-center gap-1.5 w-[200px] flex-shrink-0">
         {languages.map((lang) => (

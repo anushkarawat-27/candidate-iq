@@ -3,7 +3,6 @@
 import { useState, useRef, useCallback } from "react";
 import { Candidate } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
-import { showToast } from "./Toast";
 import SummaryTab from "./SummaryTab";
 import ReposTab from "./ReposTab";
 import StatsTab from "./StatsTab";
@@ -25,15 +24,17 @@ export default function DetailPanel({
 }: DetailPanelProps) {
   const [activeTab, setActiveTab] = useState<Tab>("summary");
   const [notes, setNotes] = useState(candidate.notes || "");
+  const [notesSaved, setNotesSaved] = useState(true);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleNotesChange = useCallback(
     (value: string) => {
       setNotes(value);
+      setNotesSaved(false);
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
       timeoutRef.current = setTimeout(() => {
         onNotesUpdate(candidate.id, value);
-        showToast("Notes saved");
+        setNotesSaved(true);
       }, 800);
     },
     [candidate.id, onNotesUpdate]
@@ -165,7 +166,7 @@ export default function DetailPanel({
       {/* Tab Content — key forces re-mount for animation */}
       <div key={activeTab} className="flex-1 overflow-y-auto p-6 animate-fade-in">
         {activeTab === "summary" && (
-          <SummaryTab candidate={candidate} notes={notes} onNotesChange={handleNotesChange} />
+          <SummaryTab candidate={candidate} notes={notes} notesSaved={notesSaved} onNotesChange={handleNotesChange} />
         )}
         {activeTab === "repos" && (
           <ReposTab repos={candidate.topRepos} />
