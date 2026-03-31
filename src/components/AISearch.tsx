@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Candidate } from "@/lib/types";
+import { showToast } from "./Toast";
 import CandidateCard from "./CandidateCard";
 
 interface AISearchProps {
@@ -15,22 +16,29 @@ export default function AISearch({ onSelectCandidate, selectedId }: AISearchProp
   const [interpretation, setInterpretation] = useState("");
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
+  const [searchError, setSearchError] = useState(false);
 
   const handleSearch = async () => {
     if (!query.trim()) return;
     setLoading(true);
     setSearched(true);
+    setSearchError(false);
     try {
       const res = await fetch("/api/ai/search", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query }),
       });
+      if (!res.ok) throw new Error("Search failed");
       const data = await res.json();
       setResults(data.candidates || []);
       setInterpretation(data.interpretation || "");
     } catch (err) {
-      console.error("AI search failed:", err);
+      setSearchError(true);
+      setResults([]);
+      setInterpretation("");
+      showToast("AI search failed — please try again", "error");
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -137,10 +145,21 @@ export default function AISearch({ onSelectCandidate, selectedId }: AISearchProp
             ))}
             {!loading && results.length === 0 && (
               <div className="text-center py-12">
-                <svg className="mx-auto h-10 w-10 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-                <p className="text-sm text-gray-400 mt-3">No candidates match your query. Try different criteria.</p>
+                {searchError ? (
+                  <>
+                    <svg className="mx-auto h-10 w-10 text-red-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    <p className="text-sm text-red-400 mt-3">Something went wrong. Please try again.</p>
+                  </>
+                ) : (
+                  <>
+                    <svg className="mx-auto h-10 w-10 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    <p className="text-sm text-gray-400 mt-3">No candidates match your query. Try different criteria.</p>
+                  </>
+                )}
               </div>
             )}
           </div>

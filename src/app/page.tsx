@@ -8,7 +8,7 @@ import DetailPanel from "@/components/DetailPanel";
 import AISearch from "@/components/AISearch";
 import CompareModal from "@/components/CompareModal";
 import RoleBar from "@/components/RoleBar";
-import ToastContainer from "@/components/Toast";
+import ToastContainer, { showToast } from "@/components/Toast";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { useCandidates } from "@/hooks/useCandidates";
 import { Candidate, CandidatesResponse } from "@/lib/types";
@@ -62,11 +62,13 @@ export default function Home() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ candidateId: id }),
       });
+      if (!res.ok) throw new Error("Failed to find similar candidates");
       const data = await res.json();
       setSimilarCandidates(data.matches || []);
       setSelectedId(null);
     } catch (err) {
-      console.error("Find similar failed:", err);
+      showToast("Failed to find similar candidates", "error");
+      console.error(err);
     } finally {
       setSimilarLoading(false);
     }
@@ -85,21 +87,26 @@ export default function Home() {
     setScoring(true);
     try {
       const allRes = await fetch("/api/candidates?limit=200");
+      if (!allRes.ok) throw new Error("Failed to fetch candidates for scoring");
       const allData: CandidatesResponse = await allRes.json();
       const allIds = allData.candidates.map((c) => c.id);
 
+      let scored = 0;
       for (let i = 0; i < allIds.length; i += 10) {
-        await fetch("/api/ai/fit", {
+        const res = await fetch("/api/ai/fit", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ roleDescription, candidateIds: allIds.slice(i, i + 10) }),
         });
+        if (res.ok) scored += Math.min(10, allIds.length - i);
       }
 
+      showToast(`Scored ${scored} candidates`);
       setFilters((prev) => ({ ...prev, sortBy: "fitScore" }));
       setPage(1);
     } catch (err) {
-      console.error("Scoring failed:", err);
+      showToast("Scoring failed — please try again", "error");
+      console.error(err);
     } finally {
       setScoring(false);
     }
@@ -107,13 +114,15 @@ export default function Home() {
 
   const handleNotesUpdate = async (id: number, notes: string) => {
     try {
-      await fetch(`/api/candidates/${id}/notes`, {
+      const res = await fetch(`/api/candidates/${id}/notes`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ notes }),
       });
+      if (!res.ok) throw new Error("Failed to save notes");
     } catch (err) {
-      console.error("Failed to save notes:", err);
+      showToast("Failed to save notes", "error");
+      console.error(err);
     }
   };
 

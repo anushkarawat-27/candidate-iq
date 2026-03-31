@@ -30,6 +30,7 @@ export default function CandidateCard({
         <img
           src={candidate.avatarUrl}
           alt={candidate.login}
+          onError={(e) => { (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(candidate.name || candidate.login)}&background=e0e7ff&color=4F46E5`; }}
           className={`w-9 h-9 rounded-lg object-cover transition-all ${isActive ? "ring-2 ring-primary-400 ring-offset-1" : "group-hover:ring-2 group-hover:ring-gray-200 group-hover:ring-offset-1"}`}
         />
         {candidate.shortlisted && (

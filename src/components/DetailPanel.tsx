@@ -51,7 +51,12 @@ export default function DetailPanel({
       <div className="p-6 border-b border-gray-100">
         <div className="flex items-start gap-4">
           <div className="relative">
-            <img src={candidate.avatarUrl} alt={candidate.login} className="w-16 h-16 rounded-xl border-2 border-gray-100 object-cover" />
+            <img
+              src={candidate.avatarUrl}
+              alt={candidate.login}
+              onError={(e) => { (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(candidate.name || candidate.login)}&background=e0e7ff&color=4F46E5&size=128`; }}
+              className="w-16 h-16 rounded-xl border-2 border-gray-100 object-cover"
+            />
             {candidate.shortlisted && (
               <div className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-primary-500 rounded-full flex items-center justify-center shadow-sm ring-2 ring-white">
                 <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 24 24">

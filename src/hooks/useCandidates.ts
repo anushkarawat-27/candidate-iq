@@ -12,6 +12,7 @@ export function useCandidates() {
   const [totalPages, setTotalPages] = useState(0);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"search" | "shortlisted">("search");
   const [filters, setFilters] = useState<Filters>({
     search: "",
@@ -22,6 +23,7 @@ export function useCandidates() {
 
   const fetchCandidates = useCallback(async () => {
     setLoading(true);
+    setError(null);
     const params = new URLSearchParams();
     if (filters.search) params.set("search", filters.search);
     if (filters.language) params.set("language", filters.language);
@@ -33,13 +35,16 @@ export function useCandidates() {
 
     try {
       const res = await fetch(`/api/candidates?${params}`);
+      if (!res.ok) throw new Error("Failed to load candidates");
       const data: CandidatesResponse = await res.json();
       setCandidates(data.candidates);
       setTotal(data.total);
       setTotalPages(data.totalPages);
-      if (data.languages.length > 0) setLanguages(data.languages);
+      setLanguages(data.languages);
     } catch (err) {
-      console.error("Failed to fetch candidates:", err);
+      const message = err instanceof Error ? err.message : "Failed to load candidates";
+      setError(message);
+      showToast(message, "error");
     } finally {
       setLoading(false);
     }
@@ -62,30 +67,21 @@ export function useCandidates() {
   const handleShortlistToggle = async (id: number) => {
     try {
       const res = await fetch(`/api/candidates/${id}/shortlist`, { method: "PATCH" });
+      if (!res.ok) throw new Error("Failed to update shortlist");
       const updated: Candidate = await res.json();
       setCandidates((prev) => prev.map((c) => (c.id === id ? updated : c)));
       showToast(updated.shortlisted ? "Added to shortlist" : "Removed from shortlist");
       return updated;
     } catch (err) {
-      console.error("Failed to toggle shortlist:", err);
+      showToast("Failed to update shortlist", "error");
+      console.error(err);
       return null;
     }
   };
 
   return {
-    candidates,
-    setCandidates,
-    languages,
-    total,
-    totalPages,
-    page,
-    setPage,
-    loading,
-    activeTab,
-    filters,
-    setFilters,
-    handleFiltersChange,
-    handleTabChange,
-    handleShortlistToggle,
+    candidates, setCandidates, languages, total, totalPages,
+    page, setPage, loading, error, activeTab, filters, setFilters,
+    handleFiltersChange, handleTabChange, handleShortlistToggle,
   };
 }

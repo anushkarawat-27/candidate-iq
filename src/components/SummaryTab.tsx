@@ -23,13 +23,15 @@ export default function SummaryTab({ candidate, notes, onNotesChange }: SummaryT
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ candidateId: candidate.id }),
       });
+      if (!res.ok) throw new Error("Failed to generate summary");
       const data = await res.json();
       if (data.summary) {
         setAiSummary(data.summary);
         showToast("Summary generated");
       }
     } catch (err) {
-      console.error("Failed to generate summary:", err);
+      showToast("Failed to generate summary", "error");
+      console.error(err);
     } finally {
       setSummaryLoading(false);
     }

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Candidate } from "@/lib/types";
 import { formatNumber } from "@/lib/utils";
+import { showToast } from "./Toast";
 
 interface CompareModalProps {
   candidates: Candidate[];
@@ -21,10 +22,12 @@ export default function CompareModal({ candidates, onClose }: CompareModalProps)
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ candidateIds: candidates.map((c) => c.id) }),
       });
+      if (!res.ok) throw new Error("Comparison failed");
       const data = await res.json();
       if (data.comparison) setComparison(data.comparison);
     } catch (err) {
-      console.error("Compare failed:", err);
+      showToast("Failed to generate comparison", "error");
+      console.error(err);
     } finally {
       setLoading(false);
     }
