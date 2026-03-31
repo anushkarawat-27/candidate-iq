@@ -1,15 +1,23 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { CLAUDE_MODEL } from "./constants";
 
-const client = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
+const apiKey = process.env.ANTHROPIC_API_KEY;
+
+export const AI_AVAILABLE = !!apiKey;
+
+const client = apiKey
+  ? new Anthropic({ apiKey })
+  : null;
 
 export async function askClaude(
   systemPrompt: string,
   userMessage: string,
   maxTokens: number = 1024
 ): Promise<string> {
+  if (!client) {
+    throw new Error("AI features unavailable — no ANTHROPIC_API_KEY configured");
+  }
+
   const response = await client.messages.create({
     model: CLAUDE_MODEL,
     max_tokens: maxTokens,

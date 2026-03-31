@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { askClaude, parseJsonResponse } from "@/lib/claude";
+import { askClaude, parseJsonResponse, AI_AVAILABLE } from "@/lib/claude";
 import { buildWhereClause, safeSortColumn } from "@/lib/candidates";
 import { query } from "@/lib/db";
 import { Candidate } from "@/lib/types";
 import { PROMPTS } from "@/lib/prompts";
 import { AI_TOKEN_LIMITS } from "@/lib/constants";
-import { badRequest, errorResponse, parseBody, searchSchema } from "@/lib/api";
+import { errorResponse, parseBody, searchSchema } from "@/lib/api";
+import { fallbackSearch } from "@/lib/ai-fallback";
 
 interface ParsedFilters {
   search: string;
@@ -22,9 +23,16 @@ export async function POST(req: NextRequest) {
     const parsed = await parseBody(req, searchSchema);
     if ("error" in parsed) return parsed.error;
 
-    const result = await askClaude(PROMPTS.SEARCH, parsed.data.query, AI_TOKEN_LIMITS.SEARCH);
-    const filters = parseJsonResponse<ParsedFilters>(result);
-    if (!filters) return errorResponse("Failed to parse AI response");
+    let filters: ParsedFilters;
+
+    if (AI_AVAILABLE) {
+      const result = await askClaude(PROMPTS.SEARCH, parsed.data.query, AI_TOKEN_LIMITS.SEARCH);
+      const aiFilters = parseJsonResponse<ParsedFilters>(result);
+      if (!aiFilters) return errorResponse("Failed to parse AI response");
+      filters = aiFilters;
+    } else {
+      filters = fallbackSearch(parsed.data.query);
+    }
 
     const { whereClause, values } = buildWhereClause({
       search: filters.search || undefined,
