@@ -13,6 +13,7 @@ export function useCandidates() {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [shortlistedCount, setShortlistedCount] = useState(0);
   const [activeTab, setActiveTab] = useState<"search" | "shortlisted">("search");
   const [filters, setFilters] = useState<Filters>({
     search: "",
@@ -41,6 +42,13 @@ export function useCandidates() {
       setTotal(data.total);
       setTotalPages(data.totalPages);
       setLanguages(data.languages);
+
+      // Fetch global shortlisted count
+      const countRes = await fetch("/api/candidates?shortlisted=true&limit=1");
+      if (countRes.ok) {
+        const countData = await countRes.json();
+        setShortlistedCount(countData.total);
+      }
     } catch (err) {
       const message = err instanceof Error ? err.message : "Failed to load candidates";
       setError(message);
@@ -70,6 +78,7 @@ export function useCandidates() {
       if (!res.ok) throw new Error("Failed to update shortlist");
       const updated: Candidate = await res.json();
       setCandidates((prev) => prev.map((c) => (c.id === id ? updated : c)));
+      setShortlistedCount((prev) => prev + (updated.shortlisted ? 1 : -1));
       showToast(updated.shortlisted ? "Added to shortlist" : "Removed from shortlist");
       return updated;
     } catch (err) {
@@ -80,8 +89,8 @@ export function useCandidates() {
   };
 
   return {
-    candidates, setCandidates, languages, total, totalPages,
-    page, setPage, loading, error, activeTab, filters, setFilters,
+    candidates, languages, total, totalPages, shortlistedCount,
+    page, setPage, loading, error, activeTab, setFilters,
     handleFiltersChange, handleTabChange, handleShortlistToggle,
   };
 }

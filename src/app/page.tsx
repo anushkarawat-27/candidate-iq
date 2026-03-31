@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback } from "react";
 import Navbar from "@/components/Navbar";
 import FilterBar from "@/components/FilterBar";
 import CandidateList from "@/components/CandidateList";
@@ -17,7 +17,7 @@ import { Candidate, CandidatesResponse } from "@/lib/types";
 
 export default function Home() {
   const {
-    candidates, languages, total, totalPages,
+    candidates, languages, total, totalPages, shortlistedCount,
     page, setPage, loading, activeTab, setFilters,
     handleFiltersChange, handleTabChange, handleShortlistToggle,
   } = useCandidates();
@@ -138,7 +138,6 @@ export default function Home() {
     : rawCandidates.map((c) => ({ ...c, fitScore: null, fitReason: null }));
   const selectedCandidate = displayCandidates.find((c) => c.id === selectedId);
   const compareCandidates = displayCandidates.filter((c) => compareIds.has(c.id));
-  const shortlistedCount = useMemo(() => candidates.filter((c) => c.shortlisted).length, [candidates]);
 
   // --- Keyboard shortcuts ---
 
