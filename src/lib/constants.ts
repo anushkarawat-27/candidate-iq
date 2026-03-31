@@ -31,5 +31,8 @@ export const CSV_HEADERS = [
   "Public Repos",
   "Blog",
   "Twitter",
+  "Fit Score",
+  "Fit Reason",
+  "Notes",
   "AI Summary",
 ] as const;

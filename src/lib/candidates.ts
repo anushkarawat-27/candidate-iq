@@ -229,6 +229,9 @@ export function candidateToCsvRow(c: Candidate): string[] {
     escapeCsv(c.publicRepos),
     escapeCsv(c.blog),
     escapeCsv(c.twitterUsername ? `@${c.twitterUsername}` : ""),
+    escapeCsv(c.fitScore != null ? `${c.fitScore}%` : ""),
+    escapeCsv(c.fitReason),
+    escapeCsv(c.notes),
     escapeCsv(c.aiSummary),
   ];
 }
