@@ -17,8 +17,8 @@ import { Candidate, CandidatesResponse } from "@/lib/types";
 
 export default function Home() {
   const {
-    candidates, setCandidates, languages, total, totalPages,
-    page, setPage, loading, activeTab, filters, setFilters,
+    candidates, languages, total, totalPages,
+    page, setPage, loading, activeTab, setFilters,
     handleFiltersChange, handleTabChange, handleShortlistToggle,
   } = useCandidates();
 
@@ -80,7 +80,7 @@ export default function Home() {
   const handleCompareToggle = (id: number) => {
     setCompareIds((prev) => {
       const next = new Set(prev);
-      next.has(id) ? next.delete(id) : (next.size < 4 && next.add(id));
+      if (next.has(id)) { next.delete(id); } else if (next.size < 4) { next.add(id); }
       return next;
     });
   };

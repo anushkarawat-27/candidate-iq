@@ -1,12 +1,17 @@
 import { z } from "zod";
 
 const envSchema = z.object({
-  DATABASE_URL: z.string().url("DATABASE_URL must be a valid connection string"),
-  ANTHROPIC_API_KEY: z.string().min(1, "ANTHROPIC_API_KEY is required").optional(),
+  DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
+  ANTHROPIC_API_KEY: z.string().min(1).optional(),
   GITHUB_TOKEN: z.string().min(1).optional(),
 });
 
 function validateEnv() {
+  // Skip validation during build time (env vars aren't available)
+  if (process.env.NODE_ENV === "production" && !process.env.DATABASE_URL) {
+    return { DATABASE_URL: "", ANTHROPIC_API_KEY: undefined, GITHUB_TOKEN: undefined };
+  }
+
   const result = envSchema.safeParse(process.env);
   if (!result.success) {
     console.error("Environment validation failed:");

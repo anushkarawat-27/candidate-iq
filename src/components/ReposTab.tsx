@@ -32,7 +32,7 @@ export default function ReposTab({ repos }: ReposTabProps) {
   const toggleLang = (lang: string) => {
     setLangFilter((prev) => {
       const next = new Set(prev);
-      next.has(lang) ? next.delete(lang) : next.add(lang);
+      if (next.has(lang)) { next.delete(lang); } else { next.add(lang); }
       return next;
     });
   };

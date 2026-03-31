@@ -1,17 +1,23 @@
 import { Pool } from "pg";
-import { env } from "./env";
 
-const pool = new Pool({
-  connectionString: env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false },
-  max: 10,
-});
+let pool: Pool | null = null;
+
+function getPool(): Pool {
+  if (!pool) {
+    pool = new Pool({
+      connectionString: process.env.DATABASE_URL,
+      ssl: { rejectUnauthorized: false },
+      max: 10,
+    });
+  }
+  return pool;
+}
 
 export async function query<T = Record<string, unknown>>(
   text: string,
   params?: unknown[]
 ): Promise<T[]> {
-  const result = await pool.query(text, params);
+  const result = await getPool().query(text, params);
   return result.rows as T[];
 }
 
