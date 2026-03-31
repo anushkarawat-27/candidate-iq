@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import Navbar from "@/components/Navbar";
 import FilterBar from "@/components/FilterBar";
 import CandidateList from "@/components/CandidateList";
@@ -8,9 +8,11 @@ import DetailPanel from "@/components/DetailPanel";
 import AISearch from "@/components/AISearch";
 import CompareModal from "@/components/CompareModal";
 import RoleBar from "@/components/RoleBar";
+import KeyboardHint from "@/components/KeyboardHint";
 import ToastContainer, { showToast } from "@/components/Toast";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { useCandidates } from "@/hooks/useCandidates";
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { Candidate, CandidatesResponse } from "@/lib/types";
 
 export default function Home() {
@@ -134,6 +136,17 @@ export default function Home() {
     : rawCandidates.map((c) => ({ ...c, fitScore: null, fitReason: null }));
   const selectedCandidate = displayCandidates.find((c) => c.id === selectedId);
   const compareCandidates = displayCandidates.filter((c) => compareIds.has(c.id));
+  const shortlistedCount = useMemo(() => candidates.filter((c) => c.shortlisted).length, [candidates]);
+
+  // --- Keyboard shortcuts ---
+
+  useKeyboardShortcuts({
+    candidates: displayCandidates,
+    selectedId,
+    onSelect: handleSelect,
+    onShortlist: handleShortlist,
+    onClose: () => setSelectedId(null),
+  });
 
   // --- Render ---
 
@@ -175,6 +188,7 @@ export default function Home() {
             languages={languages}
             activeTab={activeTab}
             onTabChange={handleTabChange}
+            shortlistedCount={shortlistedCount}
           />
 
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -249,7 +263,7 @@ export default function Home() {
                 {selectedCandidate && (
                   <>
                     <div className="fixed inset-0 bg-black/20 z-40 animate-fade-in" onClick={() => setSelectedId(null)} />
-                    <div className="fixed top-0 right-0 h-full w-full max-w-xl z-50 animate-slide-in shadow-2xl">
+                    <div className="fixed top-0 right-0 h-full w-full sm:max-w-xl z-50 animate-slide-in shadow-2xl">
                       <div className="h-full flex flex-col">
                         <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100 bg-white flex-shrink-0">
                           <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">Candidate Detail</span>
@@ -280,6 +294,7 @@ export default function Home() {
         <CompareModal candidates={compareCandidates} onClose={() => setShowCompare(false)} />
       )}
 
+      <KeyboardHint />
       <ToastContainer />
     </div>
   );

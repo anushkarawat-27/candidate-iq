@@ -162,8 +162,8 @@ export default function DetailPanel({
         </div>
       </div>
 
-      {/* Tab Content */}
-      <div className="flex-1 overflow-y-auto p-6 animate-fade-in">
+      {/* Tab Content — key forces re-mount for animation */}
+      <div key={activeTab} className="flex-1 overflow-y-auto p-6 animate-fade-in">
         {activeTab === "summary" && (
           <SummaryTab candidate={candidate} notes={notes} onNotesChange={handleNotesChange} />
         )}

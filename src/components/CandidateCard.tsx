@@ -42,8 +42,8 @@ export default function CandidateCard({
         )}
       </div>
 
-      {/* Name + subtitle — fixed width */}
-      <div className="min-w-0 w-[220px] flex-shrink-0">
+      {/* Name + subtitle */}
+      <div className="min-w-0 w-[140px] sm:w-[220px] flex-shrink-0">
         <h3 className="font-semibold text-primary-900 text-sm truncate leading-tight">
           {candidate.name || candidate.login}
         </h3>

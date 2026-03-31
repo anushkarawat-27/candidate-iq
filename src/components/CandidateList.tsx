@@ -36,8 +36,9 @@ export default function CandidateList({
   return (
     <div className="bg-white rounded-xl border border-gray-200/60 overflow-hidden shadow-sm">
       {/* Column Header */}
-      <div className="flex items-center gap-4 px-5 py-2.5 border-b border-gray-100 bg-gray-50/50 text-[11px] font-medium text-gray-400 uppercase tracking-wider">
+      <div className="hidden sm:flex items-center gap-4 px-5 py-2.5 border-b border-gray-100 bg-gray-50/50 text-[11px] font-medium text-gray-400 uppercase tracking-wider">
         <div className="w-4 flex-shrink-0" />
+        <div className="w-5 flex-shrink-0 text-center">#</div>
         <div className="w-9 flex-shrink-0" />
         <div className="w-[220px] flex-shrink-0">Name</div>
         <div className="hidden md:block w-[200px] flex-shrink-0">Languages</div>
@@ -76,6 +77,9 @@ export default function CandidateList({
                 className="ml-3 w-4 h-4 rounded border-gray-300 text-primary-500 focus:ring-primary-500/20 cursor-pointer flex-shrink-0 accent-primary-500"
                 title="Select for comparison"
               />
+              <span className="hidden sm:block w-5 text-center text-[11px] text-gray-300 tabular-nums flex-shrink-0">
+                {((page - 1) * 20) + i + 1}
+              </span>
               <div className="flex-1">
                 <CandidateCard
                   candidate={candidate}

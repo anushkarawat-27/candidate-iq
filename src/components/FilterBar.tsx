@@ -7,6 +7,7 @@ interface FilterBarProps {
   languages: string[];
   activeTab: "search" | "shortlisted";
   onTabChange: (tab: "search" | "shortlisted") => void;
+  shortlistedCount?: number;
 }
 
 export interface Filters {
@@ -21,6 +22,7 @@ export default function FilterBar({
   languages,
   activeTab,
   onTabChange,
+  shortlistedCount = 0,
 }: FilterBarProps) {
   const [search, setSearch] = useState("");
   const [language, setLanguage] = useState("");
@@ -67,6 +69,11 @@ export default function FilterBar({
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
               </svg>
               Shortlisted
+              {shortlistedCount > 0 && (
+                <span className="ml-1 px-1.5 py-0.5 text-[10px] font-bold bg-primary-500 text-white rounded-full min-w-[18px] text-center leading-none">
+                  {shortlistedCount}
+                </span>
+              )}
             </button>
           </div>
           {activeTab === "shortlisted" && (

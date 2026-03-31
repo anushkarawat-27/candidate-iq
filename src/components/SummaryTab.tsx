@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Candidate } from "@/lib/types";
 import { formatNumber } from "@/lib/utils";
 import { showToast } from "./Toast";
+import AnimatedCounter from "./ui/AnimatedCounter";
 
 interface SummaryTabProps {
   candidate: Candidate;
@@ -114,7 +115,7 @@ export default function SummaryTab({ candidate, notes, onNotesChange }: SummaryT
               </svg>
               <p className="text-[10px] text-gray-400 uppercase tracking-wider font-medium">{stat.label}</p>
             </div>
-            <p className="text-lg font-bold text-primary-900">{stat.value}</p>
+            <AnimatedCounter value={stat.value} className="text-lg font-bold text-primary-900" />
           </div>
         ))}
       </div>

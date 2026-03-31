@@ -2,17 +2,19 @@
 
 export function CardSkeleton() {
   return (
-    <div className="w-full px-5 py-4 border-b border-gray-100 flex items-center gap-4">
-      <div className="w-10 h-10 rounded-full animate-shimmer flex-shrink-0" />
-      <div className="flex-1">
-        <div className="h-4 animate-shimmer rounded-md w-36 mb-2" />
-        <div className="h-3 animate-shimmer rounded-md w-48" />
+    <div className="w-full px-5 py-3.5 border-b border-gray-100 flex items-center gap-4">
+      <div className="w-4 h-4 rounded animate-shimmer flex-shrink-0 ml-3" />
+      <div className="hidden sm:block w-5 flex-shrink-0" />
+      <div className="w-9 h-9 rounded-lg animate-shimmer flex-shrink-0" />
+      <div className="w-[140px] sm:w-[220px] flex-shrink-0">
+        <div className="h-4 animate-shimmer rounded-md w-28 mb-1.5" />
+        <div className="h-3 animate-shimmer rounded-md w-36" />
       </div>
-      <div className="hidden md:flex gap-1.5">
-        <div className="h-5 bg-primary-50 rounded-md w-14 animate-shimmer" />
-        <div className="h-5 bg-primary-50 rounded-md w-12 animate-shimmer" />
+      <div className="hidden md:flex gap-1.5 w-[200px] flex-shrink-0">
+        <div className="h-5 animate-shimmer rounded-md w-14" />
+        <div className="h-5 animate-shimmer rounded-md w-12" />
       </div>
-      <div className="flex gap-4">
+      <div className="flex gap-5 ml-auto flex-shrink-0">
         <div className="h-4 animate-shimmer rounded w-10" />
         <div className="h-4 animate-shimmer rounded w-10" />
       </div>

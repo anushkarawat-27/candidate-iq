@@ -11,6 +11,7 @@ const geistSans = localFont({
 export const metadata: Metadata = {
   title: "CandidateIQ — Candidate Intelligence Platform",
   description: "Browse, search, filter, and evaluate developer candidates",
+  icons: { icon: "/icon.svg" },
 };
 
 export default function RootLayout({
